@@ -19,7 +19,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-module stopwatch(input sw_rstb, clk,[31:0]sw_ms_acc, [5:0]sw_prst,sw_lap, output [5:0]sw_sec, [5:0]sw_min,[3:0]sw_hr, reg [5:0]sw_sec, [5:0]sw_min, [4:0]sw_hr);
+module stopwatch(input sw_rstb, clk,[31:0]ms_acc, [5:0]prst,sw_lap, output [5:0]sw_sec, [5:0]sw_min,[3:0]sw_hr, reg [5:0]sw_sec, [5:0]sw_min, [4:0]sw_hr);
 
 	always@(posedge clk)
 	begin
