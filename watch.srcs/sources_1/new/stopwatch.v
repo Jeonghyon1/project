@@ -19,7 +19,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-module stopwatch(input sw_rstb, clk,[31:0]ms_acc, [5:0]prst,sw_lap, output [5:0]sw_sec, [5:0]sw_min,[3:0]sw_hr, reg [5:0]sw_sec, [5:0]sw_min, [4:0]sw_hr);
+module stopwatch(input clk, sw_rstb, [31:0] ms_acc, [5:0] prst, sw_lap, output reg [5:0] sw_sec, output reg [5:0] sw_min, output reg [4:0] sw_hr);
 
 	always@(posedge clk)
 	begin
@@ -47,7 +47,7 @@ module stopwatch(input sw_rstb, clk,[31:0]ms_acc, [5:0]prst,sw_lap, output [5:0]
 		           begin
 		              sw_sec <= sw_sec+1;
 		           end
-		           if (ms_acc>=16'd60000)
+		           if (ms_acc>=16'd60000 && ms_acc % 16'd60000 == 0)
 		           begin
 		              if (sw_min == 6'b111100)
 		                 sw_min <= 0;
@@ -55,12 +55,9 @@ module stopwatch(input sw_rstb, clk,[31:0]ms_acc, [5:0]prst,sw_lap, output [5:0]
 		              begin 
 		                 sw_min <= sw_min+1;
 		              end
-		              if (ms_acc>=22'd3600000)
+		              if (ms_acc>=22'd3600000 && ms_acc % 22'd3600000 == 0)
 		              begin
-		                 if (sw_hr == 5'b11000)
-		                    sw_hr <= 0;
-		              else
-		                    sw_hr <= sw_hr+1;
+		                 sw_hr <= sw_hr+1;
 		              end
 		           end   
 		       end               
