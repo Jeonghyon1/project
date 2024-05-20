@@ -1,4 +1,10 @@
 module hours(input clk, rstb, [31:0] ms_acc, [5:0] prst, output reg [5:0] hr);
+/*
+ms_acc: total elapsed time after reset in milisecond
+prst: preset of hr
+
+hr: current hour
+*/
 	reg [31:0] ms_acc_old = 0;
 	always@(posedge clk) begin
 		if(!rstb)

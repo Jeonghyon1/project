@@ -1,4 +1,10 @@
 module minutes(input clk, rstb, [31:0] ms_acc, [5:0] prst, output reg [5:0] min);
+/*
+ms_acc: total elapsed time after reset in milisecond
+prst: preset of min
+
+min: current minute, not representing hours
+*/
 	reg [31:0] ms_acc_old = 0;
 	always@(posedge clk) begin
 		if(!rstb)
