@@ -7,32 +7,32 @@ module clock_counter(
     output wire [7:0] digit,
     output reg [15:0] led
 );
-    // Å¬·° »ı¼º (1Hz)
+    // í´ëŸ­ ìƒì„± (1Hz)
     wire clk_1hz;
 
-    // Å¬·° ºĞÁÖ±â ÀÎ½ºÅÏ½º
+    // í´ëŸ­ ë¶„ì£¼ê¸° ì¸ìŠ¤í„´ìŠ¤
     clock_divider clk_div_inst (
         .clk_in(clk),
         .rst(rstb),
         .clk_out(clk_1hz)
     );
 
-    // ÇöÀç ½Ã°£ ·¹Áö½ºÅÍ
+    // í˜„ì¬ ì‹œê°„ ë ˆì§€ìŠ¤í„°
     reg [7:0] current_time_reg [7:0];
 
-    // ½Ã°£ ¼³Á¤ ¹× Áõ°¡ ·ÎÁ÷
+    // ì‹œê°„ ì„¤ì • ë° ì¦ê°€ ë¡œì§
     always @(posedge clk_1hz or negedge rstb) begin
         if (!rstb) begin
-            current_time_reg[0] <= 8'd0; // ÃÊ
-            current_time_reg[1] <= 8'd0; // ºĞ
-            current_time_reg[2] <= 8'd0; // ½Ã
-            current_time_reg[3] <= 8'd0; // ÀÏ
-            current_time_reg[4] <= 8'd0; // ¿ù
+            current_time_reg[0] <= 8'd0; // ì´ˆ
+            current_time_reg[1] <= 8'd0; // ë¶„
+            current_time_reg[2] <= 8'd0; // ì‹œ
+            current_time_reg[3] <= 8'd0; // ì¼
+            current_time_reg[4] <= 8'd0; // ì›”
             current_time_reg[5] <= 8'd0;
             current_time_reg[6] <= 8'd0;
             current_time_reg[7] <= 8'd0;
         end else if (push_switch[2]) begin
-            // ½Ã°£ Áõ°¡ ·ÎÁ÷
+            // ì‹œê°„ ì¦ê°€ ë¡œì§
             if (current_time_reg[0] < 8'd59)
                 current_time_reg[0] <= current_time_reg[0] + 1;
             else begin
@@ -63,10 +63,10 @@ module clock_counter(
             if (push_switch[4] && current_time_reg[4] > 8'd0)
                 current_time_reg[4] <= current_time_reg[4] - 1;
         end
-        // ´Ù¸¥ DIP ½ºÀ§Ä¡¿Í Çª½Ã ¹öÆ°¿¡ ´ëÇÑ Ã³¸® Ãß°¡
+        // ë‹¤ë¥¸ DIP ìŠ¤ìœ„ì¹˜ì™€ í‘¸ì‹œ ë²„íŠ¼ì— ëŒ€í•œ ì²˜ë¦¬ ì¶”ê°€
     end
 
-    // 7-¼¼±×¸ÕÆ® µğ½ºÇÃ·¹ÀÌ ¸ğµâ ÀÎ½ºÅÏ½ºÈ­
+    // 7-ì„¸ê·¸ë¨¼íŠ¸ ë””ìŠ¤í”Œë ˆì´ ëª¨ë“ˆ ì¸ìŠ¤í„´ìŠ¤í™”
     seg7 seg7_inst (
         .rstb(rstb),
         .clk(clk),
@@ -74,7 +74,7 @@ module clock_counter(
         .seg_data(seg_data)
     );
 
-    // DIP ½ºÀ§Ä¡¿¡ µû¸¥ LED Ãâ·Â
+    // DIP ìŠ¤ìœ„ì¹˜ì— ë”°ë¥¸ LED ì¶œë ¥
     always @(posedge clk) begin
         led <= dip_switch;
     end

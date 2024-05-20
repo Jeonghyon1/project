@@ -26,11 +26,11 @@ module seg7 (
     output reg [6:0] seg_data
 );
 
-// ³»ºÎ ½ÅÈ£ Á¤ÀÇ
+// ë‚´ë¶€ ì‹ í˜¸ ì •ì˜
 reg [16:0] clk_cnt;
 reg seg_clk;
 
-// 7 ¼¼±×¸ÕÆ® µğ½ºÇÃ·¹ÀÌ¸¦ À§ÇÑ Å¬·° »ı¼º (500 Hz)
+// 7 ì„¸ê·¸ë¨¼íŠ¸ ë””ìŠ¤í”Œë ˆì´ë¥¼ ìœ„í•œ í´ëŸ­ ìƒì„± (500 Hz)
 always @(posedge clk or negedge rstb) begin 
    if (!rstb) begin
       clk_cnt <= 17'd0;
@@ -45,7 +45,7 @@ always @(posedge clk or negedge rstb) begin
    end
 end
 
-// 7 ¼¼±×¸ÕÆ® µğ½ºÇÃ·¹ÀÌ ÀÚ¸´¼ö ¼±ÅÃ
+// 7 ì„¸ê·¸ë¨¼íŠ¸ ë””ìŠ¤í”Œë ˆì´ ìë¦¿ìˆ˜ ì„ íƒ
 always @(posedge seg_clk or negedge rstb) begin 
    if (!rstb) begin
       digit <= 8'b10000000;   
@@ -54,20 +54,20 @@ always @(posedge seg_clk or negedge rstb) begin
    end
 end
 
-// 7 ¼¼±×¸ÕÆ® µğ½ºÇÃ·¹ÀÌ µ¥ÀÌÅÍ Ãâ·Â
+// 7 ì„¸ê·¸ë¨¼íŠ¸ ë””ìŠ¤í”Œë ˆì´ ë°ì´í„° ì¶œë ¥
 always @(posedge seg_clk or negedge rstb) begin 
    if (!rstb) begin
       seg_data <= 7'd0;   
    end else begin
-     case(digit)   // ¼±ÅÃÇÑ ÀÚ¸®¿¡ ¸Â´Â ¼ıÀÚ µ¥ÀÌÅÍ Ãâ·Â
-         8'b10000000 : seg_data <= 7'b0110000;  // 1 Ãâ·Â
-         8'b01000000 : seg_data <= 7'b1101101;  // 2 Ãâ·Â
-         8'b00100000 : seg_data <= 7'b1111001;  // 3 Ãâ·Â
-         8'b00010000 : seg_data <= 7'b0110011;  // 4 Ãâ·Â
-         8'b00001000 : seg_data <= 7'b1011011;  // 5 Ãâ·Â
-         8'b00000100 : seg_data <= 7'b1011111;  // 6 Ãâ·Â
-         8'b00000010 : seg_data <= 7'b1110010;  // 7 Ãâ·Â
-         8'b00000001 : seg_data <= 7'b1111111;  // 8 Ãâ·Â
+     case(digit)   // ì„ íƒí•œ ìë¦¬ì— ë§ëŠ” ìˆ«ì ë°ì´í„° ì¶œë ¥
+         8'b10000000 : seg_data <= 7'b0110000;  // 1 ì¶œë ¥
+         8'b01000000 : seg_data <= 7'b1101101;  // 2 ì¶œë ¥
+         8'b00100000 : seg_data <= 7'b1111001;  // 3 ì¶œë ¥
+         8'b00010000 : seg_data <= 7'b0110011;  // 4 ì¶œë ¥
+         8'b00001000 : seg_data <= 7'b1011011;  // 5 ì¶œë ¥
+         8'b00000100 : seg_data <= 7'b1011111;  // 6 ì¶œë ¥
+         8'b00000010 : seg_data <= 7'b1110010;  // 7 ì¶œë ¥
+         8'b00000001 : seg_data <= 7'b1111111;  // 8 ì¶œë ¥
          default : seg_data <= 7'd0;
      endcase
    end

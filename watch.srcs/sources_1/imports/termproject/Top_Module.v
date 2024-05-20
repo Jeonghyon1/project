@@ -12,7 +12,7 @@ module Top_Module (
     output wire lcd_e
 );
 
-// �ν��Ͻ�ȭ
+// 인스턴스화
 wire clk_1hz;
 wire [31:0] current_time;
 
