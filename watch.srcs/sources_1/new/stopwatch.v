@@ -75,3 +75,53 @@ always @(posedge clk or negedge rstb) begin
 end
 
 endmodule 
+
+//testbench//
+module stopwatch_tb();
+
+// Inputs
+	reg clk; 
+	reg rstb; 
+	reg sw_lap; 
+	reg sw_stop;
+	reg [31:0] prst;
+
+
+// Outputs
+wire [7:0] sw_lap_time;
+wire [7:0] sw_stop_time;
+wire sw_start_display;
+wire [7:0] sw_time;	
+wire [5:0] sec;
+wire [5:0] min;
+wire [5:0] hr; 
+wire [5:0] day;
+wire [5:0] mon; 
+wire [5:0] yr;
+wire [9:0] ms;
+wire [31:0] ms_acc;
+
+stopwatch stopwatch(.clk(clk), .rstb(rstb), .prst(prst), .sw_lap(sw_lap), .sw_stop(sw_stop), .sw_lap_time(sw_lap_time), .sw_stop_time(sw_stop_time), .sw_start_display(sw_start_display), .sw_time(sw_time));
+
+
+  always #5 clk =~clk;
+  
+// Initialize Inputs
+initial 
+begin
+  clk = 0;
+  rstb = 0;
+  sw_lap = 0;
+  sw_stop = 0;
+  prst = 32'b0;
+  
+  
+  #10 rstb = 1;  
+
+  #1000 sw_lap = 1;
+  #10 sw_lap = 0;
+  
+  #1000 sw_stop = 1;
+  #10 sw_stop = 0;
+end
+endmodule
