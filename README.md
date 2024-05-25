@@ -9,7 +9,8 @@
 ---
 
 ### 김민주
-2024.05.25 'switch.v': 'clock_counter.v'를 이용하여 구간기록, 중지, 시작 기능 구현함. sw_stop과 sw_start를 따로 만들어 중지와 재개를 표시하도록 함.
+2024.05.24 'switch.v': 'clock_counter.v'를 이용하여 구간기록, 중지, 시작 기능 구현함. sw_stop과 sw_start를 따로 만들어 중지와 재개를 표시하도록 함.
+2024.05.25 'switch.v': 'rtc.v', 'time_transform.v'로 다시 구현함. sw_start 대신 sw_stop으로 통합하여 표시함.
 
 
 
