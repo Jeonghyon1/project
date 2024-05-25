@@ -1,4 +1,4 @@
-module rtc(input clk, rstb, [15:0] scale, output reg [9:0] ms, reg [31:0] ms_acc); //accumulated up to 2^32
+module rtc(input clk, rstb, [63:0] scale, output reg [9:0] ms, reg [31:0] ms_acc); //accumulated up to 2^32
 /*
 ms: time in milisecond, goes back to 0 with each 1s
 ms_acc: total elapsed time after reset in milisecond
@@ -12,7 +12,7 @@ ms_acc: total elapsed time after reset in milisecond
 			ms <= 0;
 			ms_acc <= 0;
 		end
-		else if(cnt * scale == freq * 10'd1000) begin //times of period equals 1 milisecond
+		else if(cnt * $bitstoreal(scale) == freq * 10'd1000) begin //times of period equals 1 milisecond
 			cnt <= 0;
 			ms_acc <= ms_acc + 1;
 
