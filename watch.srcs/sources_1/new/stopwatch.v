@@ -1,4 +1,4 @@
-`timescale 1ns / 1ps
+
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
 // Engineer: 
@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module stopwatch(input clk, sw_rstb, [31:0] ms_acc, [5:0] prst, sw_lap, output reg [5:0] sw_sec, output reg [5:0] sw_min, output reg [5:0] sw_hr, output reg [5:0] sw_sec_lap, output reg [5:0] sw_min_lap, output reg [4:0] sw_hr_lap);
+module stopwatch(input clk, sw_rstb, sw_lap, [31:0] ms_acc, [5:0] prst, output reg [5:0] sw_sec, output reg [5:0] sw_min, output reg [5:0] sw_hr, output reg [5:0] sw_sec_lap, output reg [5:0] sw_min_lap, output reg [4:0] sw_hr_lap);
 
 
 
@@ -28,9 +28,9 @@ module stopwatch(input clk, sw_rstb, [31:0] ms_acc, [5:0] prst, sw_lap, output r
 	begin
 		if(sw_rstb==1'b0)
 		begin
-		   sw_sec=prst;
-		   sw_min=prst;
-		   sw_hr=prst; 
+		   sw_sec<=prst;
+		   sw_min<=prst;
+		   sw_hr<=prst; 
 		end
 		else 
 		begin
