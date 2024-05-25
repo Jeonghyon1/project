@@ -1,4 +1,4 @@
-module time_transform(input clk, rstb, [31:0] ms_acc, [31:0] prst, output reg [5:0] sec, min, hr, day, mon, yr);
+module time_transform(input clk, rstb, [31:0] ms_acc, [41:0] prst, output reg [5:0] sec, min, hr, day, mon, reg [11:0] yr);
 	
 	always@(posedge clk)
 		if(!rstb) begin
@@ -6,8 +6,8 @@ module time_transform(input clk, rstb, [31:0] ms_acc, [31:0] prst, output reg [5
 			min = prst[11:6];
 			hr = prst[17:12];
 			day = prst[23:18];
-			mon = prst[27:24];
-			yr = prst[31:28];
+			mon = prst[29:24];
+			yr = prst[41:30];
 		end
 	
 	always @(ms_acc) begin

@@ -20,10 +20,6 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-<<<<<<< HEAD
-module stopwatch(input clk, sw_rstb, sw_lap, [31:0] ms_acc, [5:0] prst, output reg [5:0] sw_sec, output reg [5:0] sw_min, output reg [5:0] sw_hr, output reg [5:0] sw_sec_lap, output reg [5:0] sw_min_lap, output reg [4:0] sw_hr_lap);
-=======
->>>>>>> d4d78b9f7fe76ddd6d606e1e30c384e3a1651481
 
 
 module stopwatch(
