@@ -36,4 +36,7 @@
 5/20 `rtc.v`, `seconds.v`, `minutes.v`, `hours.v`: 각 모듈별 docstring 추가.  
 5/20 `seconds.v` 등을 `time_transform.v`로 통합: 기존 자리올림 제대로 안되던 문제 해결+연월일 추가.  
 added `bin2dec.v`, `dec2bin.v`: 이진수 표기와 10의 자리 1의 자리 나눠진 2진수 표기 간 전환.  
-예시 _27_ bin2dec(011011)={0010, 0111} _15_ dec2bin({0001, 0101})=001111
+예시 **27** bin2dec(011011)={0010, 0111} **15** dec2bin({0001, 0101})=001111
+
+5/25 `rtc.v`: 실수 배속을 지원 추가.  
+added `rtc_tb.v`: vivado에서도 시뮬레이션 시작.
