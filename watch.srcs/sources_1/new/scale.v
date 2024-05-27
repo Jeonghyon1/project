@@ -1,30 +1,22 @@
-`timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 05/27/2024 03:37:33 PM
-// Design Name: 
-// Module Name: scale
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
-
-
 module scale(
-    input clk,
     input rstb,
     input faster,
     input slower,
-    output [63:0] scale
+    output reg [5:0] scale
     );
+    
+    always@(negedge rstb)
+        scale=6'o1_0;
+    
+    always@(posedge faster)
+        if(scale > 6'o0_7)
+            scale <= scale + 6'o1_0;
+        else
+            scale <= scale + 6'o0_1;
+            
+    always@(posedge slower)
+        if(scale<6'o2_0)
+            scale <= scale - 6'o0_1;
+        else
+            scale <= scale - 6'o1_0;
 endmodule
