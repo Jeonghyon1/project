@@ -11,7 +11,7 @@ module time_setting (
 reg [3:0] month_tens, month_units, day_tens, day_units;
 reg [3:0] hour_tens, hour_units, minute_tens, minute_units, second_tens, second_units;
 
-always @(posedge clk or negedge rstb) begin
+always @(posedge clk) begin
     if (!rstb) begin
         month_tens <= 0;
         month_units <= 0;

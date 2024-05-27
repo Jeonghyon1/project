@@ -1,12 +1,10 @@
 module stopwatch(
 input clk, rstb, sw_lap, sw_pause,
-input [5:0] hr, min, sec,
+input [17:0] current,
 output [17:0] lap_0,lap_1,lap_2,lap_3,
 output reg [17:0] sw_time);
 
 reg [17:0] lap [3:0];
-wire [17:0] current;
-assign current = {hr, min, sec};
 assign lap_0=lap[0];
 assign lap_1=lap[1];
 assign lap_2=lap[2];
