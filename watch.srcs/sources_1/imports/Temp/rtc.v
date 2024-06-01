@@ -3,7 +3,7 @@ module rtc(input clk, rstb, [5:0] scale, output reg [9:0] ms, reg [31:0] ms_acc)
 ms: time in milisecond, goes back to 0 with each 1s
 ms_acc: total elapsed time after reset in milisecond
 */
-	reg [16:0] cnt = 0;
+	integer cnt = 0;
 	parameter freq = 100;//in MHz
 
 	always@(posedge clk) begin

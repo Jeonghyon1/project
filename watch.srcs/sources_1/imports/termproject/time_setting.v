@@ -26,10 +26,7 @@ always @(posedge clk) begin
         end
     end
     
-    n=6;
-    for(i=0;i<6;i=i+1) begin
-        n<=i*digits[i];
-    end
+    n=digits[1]+2*digits[2]+3*digits[3]+4*digits[4]+5*digits[5];
     
     yr<=d2b(val_y[5],val_y[4]);
     mon<=d2b(val_y[3],val_y[2]);
