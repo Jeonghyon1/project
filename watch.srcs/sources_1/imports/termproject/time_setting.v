@@ -4,9 +4,16 @@ module time_setting (
     input [5:0] digits,
     input inc,
     input dec,
-    input mode, //true for date, false for time
+    input mode,
     output [41:0] t
 );
+/*
+    digits: decoded selection(not sure if multiple bits are true), tens&units, hr&min&sec or yr&mon&day
+    mode: true for date, false for time
+    
+    t: concat date&time
+*/
+
 reg [3:0] val_y [5:0];
 reg [3:0] val_t [5:0];
 integer i,n;
@@ -16,7 +23,7 @@ function [6:0] d2b(input [3:0] tens,units);
 endfunction
 
 reg [5:0] yr,mon,day,hr,min,sec;
-assign t={1970+yr,mon,day,hr,min,sec};
+assign t={1970+yr,1+mon,1+day,hr,min,sec};
 
 always @(posedge clk) begin
     if (!rstb) begin

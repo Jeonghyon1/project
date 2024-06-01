@@ -2,6 +2,9 @@ module seg7(
     input [3:0] n,
     output [7:0] seg
     );
+/*
+n: number to display
+*/
     
     assign seg[0] = n==0 || n==2 || n==3 || n==5 || n==6 || n==7 || n==8 || n==9;
     assign seg[1] = n==0 || n==1 || n==2 || n==3 || n==4 || n==7 || n==8 || n==9;

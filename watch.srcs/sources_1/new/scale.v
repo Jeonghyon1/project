@@ -4,7 +4,9 @@ module scale(
     input slower,
     output reg [5:0] scale
     );
-    
+/*
+  scale: in octal number, 1's digit indicates decimal and 8's digit does integer
+*/  
     always@(negedge rstb)
         scale=6'o1_0;
     
