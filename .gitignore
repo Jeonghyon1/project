@@ -1,6 +1,9 @@
 vivado.jou
 vivado.log
-vivado_pid23612.str
+vivado_pid*
 watch.cache
 watch.ip_user_files
 .Xil
+*backup*
+watch.sim
+watch.runs
