@@ -1,61 +1,88 @@
 module time_setting (
     input clk,
     input rstb,
-    input [5:0] digits,
-    input inc,
-    input dec,
-    input mode,
-    output [41:0] t
+    input left,right,
+    input inc, dec,
+    input set,mode,
+    output reg [17:0] t,
+    output reg [17:0] tmp,
+    output reg [2:0] digit
 );
 /*
-    digits: decoded selection(not sure if multiple bits are true), tens&units, hr&min&sec or yr&mon&day
-    mode: true for date, false for time
-    
-    t: concat date&time
+
 */
 
-reg [3:0] val_y [5:0];
-reg [3:0] val_t [5:0];
-integer i,n;
+reg [3:0] val [5:0];
+integer i;
+reg [5:0] yr,mon,day,hr,min,sec;
 
 function [6:0] d2b(input [3:0] tens,units);
     d2b = 10 * tens + units;
 endfunction
 
-reg [5:0] yr,mon,day,hr,min,sec;
-assign t={1970+yr,1+mon,1+day,hr,min,sec};
-
 always @(posedge clk) begin
     if (!rstb) begin
-        for(i=0;i<6;i=i+1) begin
-            val_y[i]=0;
-            val_t[i]=0;
-        end
+        digit=0;
+        for(i=0;i<6;i=i+1)
+            val[i]=0;
     end
-    
-    n=digits[1]+2*digits[2]+3*digits[3]+4*digits[4]+5*digits[5];
-    
-    yr<=d2b(val_y[5],val_y[4]);
-    mon<=d2b(val_y[3],val_y[2]);
-    day<=d2b(val_y[1],val_y[0]);
-    
-    hr<=d2b(val_t[5],val_t[4]);
-    min<=d2b(val_t[3],val_t[2]);
-    sec<=d2b(val_t[1],val_t[0]);
-    
-    
+    if(mode) begin
+        yr<=d2b(val[5],val[4]);
+        mon<=d2b(val[3],val[2]);
+        day<=d2b(val[1],val[0]);
+        
+        if(mon>12)
+            mon<=12;
+        else if(mon==0)
+            mon<=1;
+        if(day>31)
+            day<=31;
+        else if(day==0)
+            day<=1;
+            
+        tmp<={yr,mon,day};
+    end
+    else begin
+        hr<=d2b(val[5],val[4]);
+        min<=d2b(val[3],val[2]);
+        sec<=d2b(val[1],val[0]);
+        
+        if(hr>23)
+            hr<=23;
+        if(min>59)
+            min<=59;
+        if(sec>59)
+            sec<=59;
+            
+        tmp<={hr,min,sec};
+    end
 end
 
+always@(posedge set)
+    t<=tmp;
+
 always@(posedge inc)
-    if(mode)
-        val_y[n]<=val_y[n]+1;
+    if(val[digit]==9)
+        val[digit]<=0;
     else
-        val_t[n]<=val_t[n]+1;
+        val[digit]<=val[digit]+1;
         
 always@(posedge dec)
-    if(mode)
-        val_y[n]<=val_y[n]-1;
+    if(val[digit]==0)
+        val[digit]<=9;
     else
-        val_t[n]<=val_t[n]-1;
+        val[digit]<=val[digit]-1;
+
+always@(posedge left)
+    if(digit==5)
+        digit<=0;
+    else
+        digit<=digit+1;
+
+always@(posedge right)
+    if(digit==0)
+        digit<=5;
+    else
+        digit<=digit-1;
 
 endmodule
