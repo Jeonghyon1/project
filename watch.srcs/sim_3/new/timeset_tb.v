@@ -21,9 +21,11 @@ module timeset_tb;
         #5 LEFT=1; #1 LEFT=0;
         #1 INC=1; #1 INC=0;
         #5 LEFT=1; #1 LEFT=0; #1 LEFT=1; #1 LEFT=0;
-        #1 DEC=1; #1 DEC=0;
+        #1 DEC=1; #1 DEC=0; #1 DEC=1; #1 DEC=0;
         #5 RIGHT=1; #1 RIGHT=0;
         #1 INC=1; #1 INC=0;
+        #5 LEFT=1; #1 LEFT=0; #1 LEFT=1; #1 LEFT=0;
+        #5 DEC=1; #1 DEC=0;
         
         #10 SET=1; #1 SET=0;
     end

@@ -7,3 +7,5 @@ watch.ip_user_files
 *backup*
 watch.sim
 watch.runs
+watch.hw
+./transcript
