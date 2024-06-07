@@ -13,13 +13,8 @@ set_property IOSTANDARD LVCMOS33 [get_ports {R_data[2]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {R_data[1]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {R_data[0]}]
 set_property IOSTANDARD LVCMOS33 [get_ports clk]
-set_property IOSTANDARD LVCMOS33 [get_ports HSYNC]
-*set_property IOSTANDARD LVCMOS15 [get_ports sw1]
-set_property IOSTANDARD LVCMOS15 [get_ports sw2]
-set_property IOSTANDARD LVCMOS15 [get_ports sw3]
 set_property IOSTANDARD LVCMOS33 [get_ports VSYNC]
-
-
+set_property IOSTANDARD LVCMOS33 [get_ports HSYNC]
 
 
 set_property PACKAGE_PIN J22 [get_ports {B_data[3]}]
@@ -37,6 +32,6 @@ set_property PACKAGE_PIN H17 [get_ports {R_data[0]}]
 set_property PACKAGE_PIN R4 [get_ports clk]
 set_property PACKAGE_PIN K22 [get_ports HSYNC]
 set_property PACKAGE_PIN K21 [get_ports VSYNC]
-set_property PACKAGE_PIN L3 [get_ports sw1]
-set_property PACKAGE_PIN K3 [get_ports sw2]
-set_property PACKAGE_PIN M2 [get_ports sw3]
+
+set_property IOSTANDARD LVCMOS33 [get_ports rstb]
+set_property PACKAGE_PIN U7 [get_ports rstb]

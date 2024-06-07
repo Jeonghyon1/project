@@ -19,20 +19,16 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
+
+
 module vga_port(
     input clk,
     input rstb,    
-    input sw1,
-    input sw2,
-    input sw3,
     output HSYNC,
     output VSYNC,
     output reg display_on, //display on
-    output [3:0] R_data,
-    output [3:0] G_data,
-    output [3:0] B_data,
-    output [9:0] x,  //pixel positions of pixel x, value:0~799 (hsync width 800) 
-    output [9:0] y   //pixel positions of pixel y, value:0~524 (vsync width 525)
+    output [9:0] pixel_x,  //pixel positions of pixel x, value:0~799 (hsync width 800) 
+    output [9:0] pixel_y   //pixel positions of pixel y, value:0~524 (vsync width 525)
     );
     
    
@@ -157,17 +153,15 @@ wire vsync_load = (vsync_cnt >= (vsync_width - 1)) ? 1'b1 : 1'b0;
 
 
 //***********************************************************************
-//*********************** Color output Generation **********************
+//************************** output Generation **************************
 //***********************************************************************
 	assign HSYNC = hsync_1;
 	assign VSYNC = vsync_1;
-	assign x = hsync_cnt;
-	assign y = vsync_cnt;
+	assign pixel_x = hsync_cnt; 
+	assign pixel_y = vsync_cnt;
 	
-	assign R_data = ((lcd_data_en) & (sw1)) ? 4'b1111 : 4'b0000;
-    assign G_data = ((lcd_data_en) & (sw2)) ? 4'b1111 : 4'b0000;
-    assign B_data = ((lcd_data_en) & (sw3)) ? 4'b1111 : 4'b0000;
-               
+	
 
 endmodule
+
 
