@@ -1,71 +1,40 @@
 module show_digit(
-        input clk, rstb,
-        input [17:0] t,
-        output reg [7:0] digit,
-        output reg [7:0] seg_data
-    );
-    
-    reg [16:0] clk_cnt;
-    reg seg_clk;
-    
-    wire [3:0] hr_tens, hr_units, min_tens, min_units, sec_tens, sec_units;
-    
-    
-    b2d(t[17:12],hr_tens,hr_units);
-    b2d(t[11:6],min_tens,min_units);
-    b2d(t[5:0],sec_tens,sec_units);
-    
-    wire [7:0] seg_hr_t, seg_hr_u, seg_min_t, seg_min_u, seg_sec_t, seg_sec_u;
-    seg7 hr_t(.n(hr_tens), .seg(seg_hr_t));
-    seg7 hr_u(.n(hr_units), .seg(seg_hr_u));
-    seg7 min_t(.n(min_tens), .seg(seg_min_t));
-    seg7 min_u(.n(min_units), .seg(seg_min_u));
-    seg7 sec_t(.n(sec_tens), .seg(seg_sec_t));
-    seg7 sec_u(.n(sec_units), .seg(seg_sec_u));
+		input clk, rstb,
+		input [7:0] en,
+		input [31:0] numbers,
+		output [7:0] digit,
+		output reg [7:0] seg_data
+	);
+	wire [7:0]data[7:0];
+	seg7 s0(.n(numbers[3:0]),.seg(data[0]),.en(en[0]));
+	seg7 s1(.n(numbers[7:4]),.seg(data[1]),.en(en[1]));
+	seg7 s2(.n(numbers[11:8]),.seg(data[2]),.en(en[2]));
+	seg7 s3(.n(numbers[15:12]),.seg(data[3]),.en(en[3]));
+	seg7 s4(.n(numbers[19:16]),.seg(data[4]),.en(en[4]));
+	seg7 s5(.n(numbers[23:20]),.seg(data[5]),.en(en[5]));
+	seg7 s6(.n(numbers[27:24]),.seg(data[6]),.en(en[6]));
+	seg7 s7(.n(numbers[31:28]),.seg(data[7]),.en(en[7]));
+	
+	reg [2:0]d;
+	assign digit = 2**d;
+	
+	always@(posedge clk or negedge rstb) begin
+		if (!rstb) begin
+			d = 0;
+			seg_data = 0;
+		end
+		else begin
+			d = d + 1;
+			seg_data <= data[7-d];
+		end
+	end
+	
+//	always@(posedge clk or negedge rstb)
+//	begin
+//		if(!rstb)
+//			seg_data <= 0;
+//		else
+//			seg_data <= data[d];
+//	end
 
-    
-    always@(posedge clk) 
-    begin
-        if (clk_cnt == 17'd99999)
-        begin
-            clk_cnt <= 17'd0;
-            seg_clk <= ~seg_clk;
-        end
-        else
-        begin
-            clk_cnt <= clk_cnt + 1;
-        end
-    end
-    
-    
-    always@(posedge seg_clk or negedge rstb)
-    begin
-        if (!rstb) begin
-            digit <= 8'b1000_0000;
-        end
-        else begin
-            digit <= {digit[0], digit[7:1]};
-        end
-    end
-    
-    always@(posedge seg_clk or negedge rstb) 
-    begin
-        if(!rstb)
-        begin
-            seg_data <= 8'd0;
-        end
-        else
-        begin
-            case(digit)
-                8'b0000_1000: begin seg_data <= seg_hr_t; end
-                8'b0001_0000: begin seg_data <= seg_hr_u; end
-                8'b0010_0000: begin seg_data <= seg_min_t; end
-                8'b0100_0000: begin seg_data <= seg_min_u; end
-                8'b1000_0000: begin seg_data <= seg_sec_t; end
-                8'b0000_0001: begin seg_data <= seg_sec_u; end
-                default: begin seg_data <= 8'd0; end
-            endcase
-        end
-    end   
-    
 endmodule
