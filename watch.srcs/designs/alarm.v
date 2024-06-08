@@ -14,9 +14,7 @@ module alarm(
     // whether an alarm have been set
     reg IS_ALARM_SET;
     
-    alarm_timeset timeset (.clk(clk), .rstb(rstb), .is_alarm_setting(IS_ALARM_SETTING), 
-        .left_btn(push_switch[1]), .right_btn(push_switch[3]), .inc(push_switch[0]), .dec(push_switch[4]),
-        .hour(HOUR_SET), .min(MIN_SET));
+   
     
     always@(posedge is_alarm_setting)
     begin

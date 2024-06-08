@@ -15,13 +15,7 @@ module timer(
     reg [5:0] SEC_SET;
     reg IS_PAUSED;    
     
-    timer_timeset timeset (.clk(clk), .rstb(rstb), .is_timer_setting(is_timer_setting), 
-        .left_btn(push_switch[1]), .right_btn(push_switch[3]), .inc(push_switch[0]), .dec(push_switch[4]),
-        .hour(HOUR_SET), .minute(MIN_SET), .second(SEC_SET), .is_timer_running(IS_TIMER_RUNNING));
     
-    run_timer run (.clk(clk), .rstb(rstb), .is_timer_running(IS_TIMER_RUNNING), .pause(IS_PAUSED),
-        .init_hour(HOUR_SET), .init_min(MIN_SET), .init_sec(SEC_SET), 
-        .hour(hour), .min(min), .sec(sec), .is_end(is_end));
     
     always@(posedge is_timer_setting)
     begin

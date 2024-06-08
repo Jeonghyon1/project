@@ -9,9 +9,11 @@ module show_digit(
     reg seg_clk;
     
     wire [3:0] hr_tens, hr_units, min_tens, min_units, sec_tens, sec_units;
-    bin2dec hr (.bin(t[17:12]), .tens(hr_tens), .units(hr_units));
-    bin2dec min (.bin(t[11:6]), .tens(min_tens), .units(min_units));
-    bin2dec sec (.bin(t[5:0]), .tens(sec_tens), .units(sec_units));
+    
+    
+    b2d(t[17:12],hr_tens,hr_units);
+    b2d(t[11:6],min_tens,min_units);
+    b2d(t[5:0],sec_tens,sec_units);
     
     wire [7:0] seg_hr_t, seg_hr_u, seg_min_t, seg_min_u, seg_sec_t, seg_sec_u;
     seg7 hr_t(.n(hr_tens), .seg(seg_hr_t));
