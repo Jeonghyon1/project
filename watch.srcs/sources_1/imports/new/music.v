@@ -139,8 +139,7 @@ module music(
                         default: begin
                             note <= 0;
                         end
-                    endcase
-                    
+                    endcase                    
                     
                     if (note_cnt == 2'b11) begin
                         note_cnt <= 0;
