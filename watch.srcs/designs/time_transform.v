@@ -1,4 +1,4 @@
-module time_transform(input clk, rstb, mode, [31:0] ms_acc, [35:0] prst, output [17:0] date, t);
+module time_transform(input rstb, mode, [31:0] ms_acc, [35:0] prst, output [17:0] date, t);
 /*
 	mode: true for date, false for time
 	prst: preset of concat date and time
@@ -9,17 +9,15 @@ module time_transform(input clk, rstb, mode, [31:0] ms_acc, [35:0] prst, output 
 	assign date = {yr,mon,day};
 	assign t={hr,min,sec};
 	
-	always@(posedge clk)
-		if(!rstb) begin
-			sec = prst[5:0];
-			min = prst[11:6];
-			hr = prst[17:12];
-			day = prst[23:18];
-			mon = prst[29:24];
-			yr = prst[35:30];
-		end
-	
-	always @(ms_acc) begin
+	always @(posedge ms_acc[0] or negedge rstb) begin
+	if(!rstb) begin
+				sec = prst[5:0];
+				min = prst[11:6];
+				hr = prst[17:12];
+				day = prst[23:18];
+				mon = prst[29:24];
+				yr = prst[35:30];
+			end else
 		if (ms_acc % 1000 == 0 && ms_acc > 0) begin
 			if(mode) begin
 				if(sec==0) begin
