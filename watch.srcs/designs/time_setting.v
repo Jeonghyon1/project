@@ -7,6 +7,7 @@ module time_setting (
     output reg [17:0] t,
     output reg [17:0] tmp,
     output reg [2:0] digit
+    ,output reg set_done
 );
 /*
 
@@ -17,13 +18,21 @@ reg [5:0] yr,mon,day,hr,min,sec;
 reg btn_pushed;
 reg btn_prev;
 wire [5:0] btns;
-reg VAL_CHANGED;
+//reg VAL_CHANGED;
 
-assign btns = {1'b0, left, right, inc, dec, set};
+wire [5:0] trig;
+assign trig[5]=0;
+one_shot o3s(.clk(clk),.in(left),.out(trig[4]));
+one_shot o4s(.clk(clk),.in(right),.out(trig[3]));
+one_shot o5s(.clk(clk),.in(inc),.out(trig[2]));
+one_shot o6s(.clk(clk),.in(dec),.out(trig[1]));
+one_shot o7s(.clk(clk),.in(set),.out(trig[0]));
 
-function [6:0] d2b(input [3:0] tens,units);
-    d2b = 10 * tens + units;
-endfunction
+//assign btns = {1'b0, left, right, inc, dec, set};
+
+//function [6:0] d2b(input [3:0] tens,units);
+//    d2b = 10 * tens + units;
+//endfunction
 
 always@(posedge clk or negedge rstb) begin
 if(!rstb) begin
@@ -36,23 +45,24 @@ hr <= 0;
 day <= 1;
 mon <= 1;
 yr <= 24;
-VAL_CHANGED <= 1;
+//VAL_CHANGED <= 1;
+set_done=0;
 end
 else begin
-    if (btns) 
-    begin
-        btn_pushed <= 1;
-    end
-    else
-    begin
-        btn_pushed <= 0;
-        btn_prev <= 0;
-    end
+//    if (btns) 
+//    begin
+//        btn_pushed <= 1;
+//    end
+//    else
+//    begin
+//        btn_pushed <= 0;
+//        btn_prev <= 0;
+//    end
     
-    if (!btn_prev && btn_pushed)
-    begin
-        btn_prev <= 1;
-        case (btns)
+//    if (!btn_prev && btn_pushed)
+//    begin
+//        btn_prev <= 1;
+        case (trig)
 //            6'b100000: begin // rstb
 //                digit <= 0;
 //                tmp <= 0;
@@ -172,7 +182,7 @@ else begin
                         yr <= 24;
                     end
                 endcase
-                VAL_CHANGED <= 1;
+//                VAL_CHANGED <= 1;
             end
             6'b000010: begin // dec
                 case ({mode, digit})
@@ -236,25 +246,20 @@ else begin
                         yr <= 24;
                     end
                 endcase
-                VAL_CHANGED <= 1;
+//                VAL_CHANGED <= 1;
             end
             6'b000001: begin // set
                 t <= tmp;
+                set_done<=1;
             end
             default: begin
             
             end
-        endcase
-    end     
-    else if (VAL_CHANGED) begin
-        VAL_CHANGED <= 0;
-        if (mode) begin
-            tmp <= {yr, mon, day};
-        end
-        else begin
-            tmp <= {hr, min, sec};
-        end
-    end
+        endcase 
+    	if(mode)
+    		tmp<={yr,mon,day};
+    	else
+    		tmp<={hr,min,sec};
     end
 end
 

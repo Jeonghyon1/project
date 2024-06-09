@@ -5,6 +5,7 @@ module top_timeset(
     input [15:0]dip_switch,
     output [7:0] digit,
     output [7:0] seg_data
+    ,output [15:0] led
     
     //output [9:0] MS,
     //output [17:0] TIME_TMP,TIME_TARGET,T_REF,
@@ -14,11 +15,29 @@ module top_timeset(
     wire RST_TS,TIMESET_DONE;
 	wire [9:0] MS;
     wire [4:0] push;
+    wire [15:0]dip;
     debounce db0(.clk(MS[0]),.in(push_switch[0]),.out(push[0]));
     debounce db1(.clk(MS[0]),.in(push_switch[1]),.out(push[1]));
     debounce db2(.clk(MS[0]),.in(push_switch[2]),.out(push[2]));
     debounce db3(.clk(MS[0]),.in(push_switch[3]),.out(push[3]));
     debounce db4(.clk(MS[0]),.in(push_switch[4]),.out(push[4]));
+    
+    debounce ddb0(.clk(MS[0]),.in(dip_switch[0]),.out(dip[0]));
+    debounce ddb1(.clk(MS[0]),.in(dip_switch[1]),.out(dip[1]));
+    debounce ddb2(.clk(MS[0]),.in(dip_switch[2]),.out(dip[2]));
+    debounce ddb3(.clk(MS[0]),.in(dip_switch[3]),.out(dip[3]));
+    debounce ddb4(.clk(MS[0]),.in(dip_switch[4]),.out(dip[4]));
+    debounce ddb5(.clk(MS[0]),.in(dip_switch[5]),.out(dip[5]));
+    debounce ddb6(.clk(MS[0]),.in(dip_switch[6]),.out(dip[6]));
+    debounce ddb7(.clk(MS[0]),.in(dip_switch[7]),.out(dip[7]));
+    debounce ddb8(.clk(MS[0]),.in(dip_switch[8]),.out(dip[8]));
+	debounce ddb9(.clk(MS[0]),.in(dip_switch[9]),.out(dip[9]));
+	debounce ddb10(.clk(MS[0]),.in(dip_switch[10]),.out(dip[10]));
+	debounce ddb11(.clk(MS[0]),.in(dip_switch[11]),.out(dip[11]));
+	debounce ddb12(.clk(MS[0]),.in(dip_switch[12]),.out(dip[12]));
+	debounce ddb13(.clk(MS[0]),.in(dip_switch[13]),.out(dip[13]));
+	debounce ddb14(.clk(MS[0]),.in(dip_switch[14]),.out(dip[14]));
+	debounce ddb15(.clk(MS[0]),.in(dip_switch[15]),.out(dip[15]));
     
     parameter LEFT=1,RIGHT=3;
     parameter UP=0,DOWN=4; //please match with hw(pushbutton)
@@ -32,11 +51,11 @@ module top_timeset(
     wire [17:0]TIME_TARGET;
     wire [17:0] T_REF;
     wire [17:0] DAY_REF;
-    one_shot o1s(.clk(clk),.in(!dip_switch[TIMESET_SEL]),.out(TIMESET_DONE));
-    one_shot o2s(.clk(clk),.in(dip_switch[TIMESET_SEL]),.out(RST_TS));
+    one_shot o1s(.clk(clk),.in(!dip[TIMESET_SEL]),.out(TIMESET_DONE));
+    one_shot o2s(.clk(clk),.in(dip[TIMESET_SEL]),.out(RST_TS));
     rtc rtctmp(.clk(clk),.rstb(!RST_TS && !TIMESET_DONE),.scale(6'o1_0),.ms(MS),.ms_acc(MS_REF));
-    time_setting ts3 (.clk(clk), .rstb(!RST_TS), .left(push[LEFT]), .right(push[RIGHT]), .inc(push[UP]), .dec(push[DOWN]), .mode(dip_switch[TIMESET_MODE_SEL]), .set(push[CENTER]), 
-             .tmp(TIME_TMP), .digit(DIGIT),.t(TIME_TARGET));
+    time_setting ts3 (.clk(clk), .rstb(!RST_TS), .left(push[LEFT]), .right(push[RIGHT]), .inc(push[UP]), .dec(push[DOWN]), .mode(dip[TIMESET_MODE_SEL]), .set(push[CENTER]), 
+             .tmp(TIME_TMP), .digit(DIGIT),.t(TIME_TARGET),.set_done(led[10]));
     reg [7:0] EN;
     time_transform tt_normal(.rstb(!TIMESET_DONE),.mode(0),.ms_acc(MS_REF),.prst({18'o24_10_25,TIME_TARGET}),.date(DAY_REF),.t(T_REF));
     
@@ -44,7 +63,7 @@ module top_timeset(
     
     always@(posedge MS[9] or negedge rstb) begin
     	if(!rstb)
-        	EN={3*dip_switch[TIMESET_MODE_SEL],6'b111111};
+        	EN={3*dip[TIMESET_MODE_SEL],6'b111111};
 		else begin
     	  	EN[DIGIT==5? 0: DIGIT+1]=1;
 	      	EN[DIGIT==0? 5: DIGIT-1]=1;
@@ -62,7 +81,7 @@ module top_timeset(
     wire [31:0] n2;
     assign n2={8'h00,b2d(T_REF[17:12]),b2u(T_REF[17:12]),b2d(T_REF[11:6]),b2u(T_REF[11:6]),b2d(T_REF[5:0]),b2u(T_REF[5:0])};
     parameter [7:0] EN2=8'b00_111111;
-   show_digit vis_digit (.clk(MS[0]), .rstb(rstb), .numbers(dip_switch[TIMESET_SEL]? n: n2), .digit(digit), .seg_data(seg_data),.en(dip_switch[TIMESET_SEL]? EN:EN2));
+   show_digit vis_digit (.clk(MS[0]), .rstb(rstb), .numbers(dip[TIMESET_SEL]? n: n2), .digit(digit), .seg_data(seg_data),.en(dip[TIMESET_SEL]? EN:EN2));
     
     
     
