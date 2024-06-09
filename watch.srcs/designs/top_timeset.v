@@ -59,7 +59,22 @@ module top_timeset(
     reg [7:0] EN;
     time_transform tt_normal(.clk(clk),.rstb(!TIMESET_DONE),.mode(0),.ms(MS),.prst({18'o24_10_25,TIME_TARGET}),.date(DAY_REF),.t(T_REF));
     
+    wire [17:0] T_REF_SW,T_SW,T_TARGET_SW;
+    parameter PAUSE_SEL=10;
+    wire [71:0]LAPS;
+    time_transform ttsw(.clk(clk),.rstb(),.mode(0),.ms(MS),.prst({18'b0,T_TARGET_SW}),.t(T_REF_SW));
+    stopwatch swm(.clk(clk),.rstb(),.current(T_REF_SW),.sw_time(T_SW),.laps(LAPS),.sw_lap(push[CENTER]),.sw_pause(dip[PAUSE_SEL]));
+    
+    wire [17:0]T_REF_T,T_T,T_TARGET_SW;
+    wire AL1;
+    time_transform ttt(.clk(clk),.rstb(),.mode(0),.ms(MS),.prst({18'b0,T_TARGET_T}),.t(T_REF_T));
+    timer tt(.clk(clk),.rstb(),.current(T_REF_T),.pause(dip[PAUSE_SEL]),.rem_t(T_T),.alarm(AL1));
     //assign led={2**DIGIT,EN}; //for debugging
+    
+    parameter MODE_SW=8,MODE_TIMER=5,MODE_ALARM=1;
+    
+    
+    
     assign led[11:0]=T_REF[11:0];
     assign led[14:12]=MS_REF[10:8];
     
@@ -84,7 +99,5 @@ module top_timeset(
     assign n2={8'h00,b2d(T_REF[17:12]),b2u(T_REF[17:12]),b2d(T_REF[11:6]),b2u(T_REF[11:6]),b2d(T_REF[5:0]),b2u(T_REF[5:0])};
     parameter [7:0] EN2=8'b00_111111;
    show_digit vis_digit (.clk(MS[0]), .rstb(rstb), .numbers(dip[TIMESET_SEL]? n: n2), .digit(digit), .seg_data(seg_data),.en(dip[TIMESET_SEL]? EN:EN2));
-    
-    
     
 endmodule

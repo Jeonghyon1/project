@@ -1,7 +1,6 @@
 module debounce(
     input clk,
     input in,
-    output reg rising,
     output reg out
     );
     reg buff;
@@ -14,13 +13,10 @@ module debounce(
     	end
     	else begin
     		buff <= in;
-    		if(cnt==MAX) begin
+    		if(cnt==MAX)
     			out<=buff;
-    		    rising <= buff && !out;
-    		end
     		else if(buff != out)
     			cnt <= cnt+1;
     	end
     end
-    	
 endmodule
