@@ -5,7 +5,7 @@ module debounce(
     output reg out
     );
     reg buff;
-    parameter MAX=4;
+    parameter MAX=8;
     integer cnt;
     always@(posedge clk or negedge in) begin
     	if(!in) begin

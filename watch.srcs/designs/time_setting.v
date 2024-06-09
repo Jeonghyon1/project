@@ -19,13 +19,26 @@ reg btn_prev;
 wire [5:0] btns;
 reg VAL_CHANGED;
 
-assign btns = {(!rstb), left, right, inc, dec, set};
+assign btns = {1'b0, left, right, inc, dec, set};
 
 function [6:0] d2b(input [3:0] tens,units);
     d2b = 10 * tens + units;
 endfunction
 
-always@(posedge clk) begin
+always@(posedge clk or negedge rstb) begin
+if(!rstb) begin
+digit <= 0;
+tmp <= 0;
+t <= 0;
+sec <= 0;
+min <= 0;
+hr <= 0;
+day <= 1;
+mon <= 1;
+yr <= 24;
+VAL_CHANGED <= 1;
+end
+else begin
     if (btns) 
     begin
         btn_pushed <= 1;
@@ -40,18 +53,18 @@ always@(posedge clk) begin
     begin
         btn_prev <= 1;
         case (btns)
-            6'b100000: begin // rstb
-                digit <= 0;
-                tmp <= 0;
-                t <= 0;
-                sec <= 0;
-                min <= 0;
-                hr <= 0;
-                day <= 1;
-                mon <= 1;
-                yr <= 24;
-                VAL_CHANGED <= 1;
-            end
+//            6'b100000: begin // rstb
+//                digit <= 0;
+//                tmp <= 0;
+//                t <= 0;
+//                sec <= 0;
+//                min <= 0;
+//                hr <= 0;
+//                day <= 1;
+//                mon <= 1;
+//                yr <= 24;
+//                VAL_CHANGED <= 1;
+//            end
             6'b010000: begin // left
                 if (digit == 3'd5)
                     digit <= 0;
@@ -242,8 +255,6 @@ always@(posedge clk) begin
             tmp <= {hr, min, sec};
         end
     end
-    else begin
-    
     end
 end
 

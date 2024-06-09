@@ -9,7 +9,7 @@ module time_transform(input rstb, mode, [31:0] ms_acc, [35:0] prst, output [17:0
 	assign date = {yr,mon,day};
 	assign t={hr,min,sec};
 	
-	always @(posedge ms_acc[0] or negedge rstb) begin
+	always @(negedge ms_acc[0] or negedge rstb) begin
 	if(!rstb) begin
 				sec = prst[5:0];
 				min = prst[11:6];
