@@ -17,7 +17,7 @@ module time_transform(input rstb, mode, [31:0] ms_acc, [35:0] prst, output [17:0
 				day = prst[23:18];
 				mon = prst[29:24];
 				yr = prst[35:30];
-			end else
+			end else begin
 		if (ms_acc % 1000 == 0 && ms_acc > 0) begin
 			if(mode) begin
 				if(sec==0) begin
@@ -66,6 +66,7 @@ module time_transform(input rstb, mode, [31:0] ms_acc, [35:0] prst, output [17:0
 				else
 					sec <= sec + 1;
 			end
+		end
 		end
 	end
 endmodule

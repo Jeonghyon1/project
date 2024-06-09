@@ -55,11 +55,12 @@ module top_timeset(
     one_shot o2s(.clk(clk),.in(dip[TIMESET_SEL]),.out(RST_TS));
     rtc rtctmp(.clk(clk),.rstb(!RST_TS && !TIMESET_DONE),.scale(6'o1_0),.ms(MS),.ms_acc(MS_REF));
     time_setting ts3 (.clk(clk), .rstb(!RST_TS), .left(push[LEFT]), .right(push[RIGHT]), .inc(push[UP]), .dec(push[DOWN]), .mode(dip[TIMESET_MODE_SEL]), .set(push[CENTER]), 
-             .tmp(TIME_TMP), .digit(DIGIT),.t(TIME_TARGET),.set_done(led[10]));
+             .tmp(TIME_TMP), .digit(DIGIT),.t(TIME_TARGET),.set_done(led[14]));
     reg [7:0] EN;
     time_transform tt_normal(.rstb(!TIMESET_DONE),.mode(0),.ms_acc(MS_REF),.prst({18'o24_10_25,TIME_TARGET}),.date(DAY_REF),.t(T_REF));
     
     //assign led={2**DIGIT,EN}; //for debugging
+    assign led[11:0]=T_REF[11:0];
     
     always@(posedge MS[9] or negedge rstb) begin
     	if(!rstb)
