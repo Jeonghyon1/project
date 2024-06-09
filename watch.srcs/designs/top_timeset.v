@@ -6,11 +6,6 @@ module top_timeset(
     output [7:0] digit,
     output [7:0] seg_data
     ,output [15:0] led
-    
-    //output [9:0] MS,
-    //output [17:0] TIME_TMP,TIME_TARGET,T_REF,
-    //output reg [7:0] EN,
-    //output RST_TS,TIMESET_DONE
     );
     wire RST_TS,TIMESET_DONE;
 	wire [9:0] MS;
@@ -50,7 +45,10 @@ module top_timeset(
     wire [17:0]TIME_TMP;
     wire [17:0]TIME_TARGET;
     wire [17:0] T_REF;
-    wire [17:0] DAY_REF;
+    wire [17:0] DAY_REF;    
+    
+    wire [17:0] T_REF_SW,T_SW,T_TARGET_SW;
+    parameter PAUSE_SEL=10;
     one_shot o1s(.clk(clk),.in(!dip[TIMESET_SEL]),.out(TIMESET_DONE));
     one_shot o2s(.clk(clk),.in(dip[TIMESET_SEL]),.out(RST_TS));
     rtc rtctmp(.clk(clk),.rstb(!RST_TS && !TIMESET_DONE),.scale(6'o1_0),.ms(MS),.ms_acc(MS_REF));
@@ -58,21 +56,34 @@ module top_timeset(
              .tmp(TIME_TMP), .digit(DIGIT),.t(TIME_TARGET),.set_done(led[15]));
     reg [7:0] EN;
     time_transform tt_normal(.clk(clk),.rstb(!TIMESET_DONE),.mode(0),.ms(MS),.prst({18'o24_10_25,TIME_TARGET}),.date(DAY_REF),.t(T_REF));
-    
-    wire [17:0] T_REF_SW,T_SW,T_TARGET_SW;
-    parameter PAUSE_SEL=10;
+    parameter MODE_SW=8,MODE_TIMER=5,MODE_ALARM=1;
+    wire RST_SW,RST_TIMER,RESUME_SW,RESUME_TIMER;
+    one_shot(.clk(clk),.in(dip[MODE_SW]),.out(RST_SW));
+    one_shot(.clk(clk),.in(dip[MODE_TIMER]),.out(RST_TIMER));
+    //one_shot(.clk(clk),.in(dip[MODE_]),.out(RST_SW));
+    one_shot(.clk(clk),.in(MODE_SW&&!dip[PAUSE_SEL]),.out(RESUME_SW));
+    one_shot(.clk(clk),.in(MODE_TIMER&&!dip[PAUSE_SEL]),.out(RESUME_TIMER));
     wire [71:0]LAPS;
-    time_transform ttsw(.clk(clk),.rstb(),.mode(0),.ms(MS),.prst({18'b0,T_TARGET_SW}),.t(T_REF_SW));
-    stopwatch swm(.clk(clk),.rstb(),.current(T_REF_SW),.sw_time(T_SW),.laps(LAPS),.sw_lap(push[CENTER]),.sw_pause(dip[PAUSE_SEL]));
+    assign T_TARGET_SW=RST_SW*TIME_TARGET+RESUME_SW*T_SW;
+    time_transform ttsw(.clk(clk),.rstb(!RST_SW &&!RESUME_SW),.mode(0),.ms(MS),.prst({18'b0,T_TARGET_SW}),.t(T_REF_SW));
+    stopwatch swm(.clk(clk),.rstb(RST_SW),.current(T_REF_SW),.sw_time(T_SW),.laps(LAPS),.sw_lap(push[CENTER]),.sw_pause(dip[PAUSE_SEL]));
     
     wire [17:0]T_REF_T,T_T,T_TARGET_SW;
     wire AL1;
-    time_transform ttt(.clk(clk),.rstb(),.mode(0),.ms(MS),.prst({18'b0,T_TARGET_T}),.t(T_REF_T));
-    timer tt(.clk(clk),.rstb(),.current(T_REF_T),.pause(dip[PAUSE_SEL]),.rem_t(T_T),.alarm(AL1));
+    reg AL2;
+    assign T_TARGET_T=RST_TIMER*TIME_TARGET+RESUME_TIMER*T_T;
+    time_transform ttt(.clk(clk),.rstb(!RST_TIMER && !RESUME_TIMER),.mode(0),.ms(MS),.prst({18'b0,T_TARGET_T}),.t(T_REF_T));
+    timer tt(.clk(clk),.rstb(RST_TIMER),.current(T_REF_T),.pause(dip[PAUSE_SEL]),.rem_t(T_T),.alarm(AL1));
     //assign led={2**DIGIT,EN}; //for debugging
+    wire [17:0]T_TARGET_A;
     
-    parameter MODE_SW=8,MODE_TIMER=5,MODE_ALARM=1;
-    
+    always@(posedge clk)
+    	if(!rstb)
+    		AL2=0;
+    	else if(dip[MODE_ALARM] && T_REF==T_TARGET_A)
+    		AL2<=1;
+    		
+    music musaic(.clk(clk),.rstb(rstb),.is_ringing(AL1+AL2),.buzz());
     
     
     assign led[11:0]=T_REF[11:0];

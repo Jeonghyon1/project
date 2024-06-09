@@ -14,5 +14,5 @@ always@(posedge clk) begin
 			rem_t<=current;
 	end
 end
-assign alarm=rem_t==0; 
+assign alarm=rem_t==0;
 endmodule
