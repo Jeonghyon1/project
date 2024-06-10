@@ -6,10 +6,11 @@ module time_transform(input clk,rstb, mode, [9:0] ms, [35:0] prst, output [17:0]
 	date: year is reduced to 6bits
 */
 	reg [5:0] yr, sec, min, hr, day, mon;
+	reg [9:0]init;
 	assign date = {yr,mon,day};
 	assign t={hr,min,sec};
 	wire trig;
-	one_shot o23432s(.clk(clk),.in(ms==999),.out(trig));
+	one_shot o23432s(.clk(clk),.in(ms==init),.out(trig));
 	
 	always @(posedge clk) begin
 	if(!rstb) begin
@@ -19,6 +20,8 @@ module time_transform(input clk,rstb, mode, [9:0] ms, [35:0] prst, output [17:0]
 				day <= prst[23:18];
 				mon <= prst[29:24];
 				yr <= prst[35:30];
+				
+				init<=ms;
 			end else begin
 		if (trig) begin
 			if(mode) begin

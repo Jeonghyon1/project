@@ -4,7 +4,7 @@ module time_setting (
     input left, right,
     input inc, dec,
     input set,mode,
-    output reg [17:0] t,
+    output reg [17:0] t, date,
     output reg [17:0] tmp,
     output reg [2:0] digit
     ,output reg set_done
@@ -39,6 +39,7 @@ if(!rstb) begin
 digit <= 0;
 tmp <= 0;
 t <= 0;
+date<=0;
 sec <= 0;
 min <= 0;
 hr <= 0;
@@ -249,7 +250,10 @@ else begin
 //                VAL_CHANGED <= 1;
             end
             6'b000001: begin // set
-                t <= tmp;
+                if(mode)
+                	date<=tmp;
+                else
+                	t <= tmp;
                 set_done<=1;
             end
             default: begin

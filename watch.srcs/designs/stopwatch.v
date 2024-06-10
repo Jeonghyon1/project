@@ -8,13 +8,12 @@ sw_lap: to record a laptime, press triggered
 sw_pause: to pause, activate. to release, supress
 current: input time, must be re-initialized to sw_time when pause is released
  
-lap_0 - lap_3: multiple stroage
 sw_time: represent stopwatch time
 */
 
 wire trig;
 one_shot o2135s(.clk(clk),.in(sw_lap),.out(trig));
-
+reg [17:0] buff;
 always @(posedge clk) begin
 	if (!rstb) begin 
 		laps=0;
@@ -22,11 +21,12 @@ always @(posedge clk) begin
 	end
 	else begin
 		if(!sw_pause)
-			sw_time<=current;
+			buff<=current;
 		if(trig) begin
 			laps=laps<<18;
 			laps[17:0]<=sw_time;
 		end
+		sw_time<=buff;
 	end
 end
 endmodule

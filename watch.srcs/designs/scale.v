@@ -1,4 +1,5 @@
 module scale(
+	input clk,
     input rstb,
     input faster,
     input slower,
