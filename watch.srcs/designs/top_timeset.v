@@ -6,7 +6,13 @@ module top_timeset(
     output [7:0] digit,
     output [7:0] seg_data
     ,output [15:0] led
-    ,output buzzer
+    ,output buzzer,
+    output wire            vga_vs      ,
+     output wire            vga_hs      ,
+     output wire [3:0]      vga_r       ,
+     output wire [3:0]      vga_g       ,
+     output wire [3:0]      vga_b
+     
     );
     wire RST_TS,TIMESET_DONE;
 	wire [9:0] MS;
@@ -46,17 +52,19 @@ module top_timeset(
     wire [17:0]TIME_TMP;
     wire [17:0]TIME_TARGET,DATE_TARGET;
     wire [17:0] T_REF;
-    wire [17:0] DAY_REF;
+    wire [17:0] DATE_REF;
+    wire [3:0] SCALE;
+    scale scale1(.clk(clk),.rstb(rstb),.faster(push[UP]),.slower(push[DOWN]),.en(!dip[TIMESET_SEL]),.scale(SCALE));
     
     wire [17:0] T_REF_SW,T_SW,T_TARGET_SW;
     parameter PAUSE_SEL=10;
     one_shot o1s(.clk(clk),.in(!dip[TIMESET_SEL]),.out(TIMESET_DONE));
     one_shot o2s(.clk(clk),.in(dip[TIMESET_SEL]),.out(RST_TS));
-    rtc rtctmp(.clk(clk),.rstb(!RST_TS && (!TIMESET_DONE || (dip[MODE_SW]||dip[MODE_TIMER]))),.scale(6'o1_0),.ms(MS));
+    rtc rtctmp(.clk(clk),.rstb(!RST_TS && (!TIMESET_DONE || (dip[MODE_SW]||dip[MODE_TIMER]))),.scale(SCALE),.ms(MS));
     time_setting ts3 (.clk(clk), .rstb(!RST_TS), .left(push[LEFT]), .right(push[RIGHT]), .inc(push[UP]), .dec(push[DOWN]), .mode(dip[TIMESET_MODE_SEL]), .set(push[CENTER]), 
              .tmp(TIME_TMP), .digit(DIGIT),.t(TIME_TARGET),.set_done(led[15]),.date(DATE_TARGET));
     reg [7:0] EN;
-    time_transform tt_normal(.clk(clk),.rstb(!TIMESET_DONE || (dip[MODE_SW]||dip[MODE_TIMER] || dip[MODE_ALARM])),.mode(0),.ms(MS),.prst({DATE_TARGET,TIME_TARGET}),.date(DAY_REF),.t(T_REF));
+    time_transform tt_normal(.clk(clk),.rstb(!TIMESET_DONE || (dip[MODE_SW]||dip[MODE_TIMER] || dip[MODE_ALARM])),.mode(0),.ms(MS),.prst({DATE_TARGET,TIME_TARGET}),.date(DATE_REF),.t(T_REF));
     wire RST_SW,RST_TIMER,RESUME_SW,RESUME_TIMER;
     one_shot O235S(.clk(clk),.in(dip[MODE_SW]),.out(RST_SW));
     one_shot O2S(.clk(clk),.in(dip[MODE_TIMER]),.out(RST_TIMER));
@@ -98,18 +106,19 @@ module top_timeset(
 		if(!rstb)
 			AL<=0;
 		else begin
-			if(AL_trig)
-				AL<=1;
 			if(dip[STOP])
 				AL<=0;
+			else if(AL_trig)
+				AL<=1;
 		end
 	end
+	assign led[14:12]={AL,AL2,AL1};
     music musaic(.clk(clk),.rstb(rstb),.is_ringing(AL),.buzz(buzzer));
     
     
-    assign led[11:0]=T_REF[11:0];
+//    assign led[11:0]=T_REF[11:0];
 //    assign led[14:12]=MS[9:7];
-    
+assign led[3:0]=SCALE;
     always@(posedge MS[9] or negedge rstb) begin
     	if(!rstb)
         	EN={3*dip[TIMESET_MODE_SEL],6'b111111};
@@ -140,4 +149,8 @@ module top_timeset(
 	assign N_DISP = dip[TIMESET_SEL]? n : (dip[MODE_TIMER]?n3 : (dip[MODE_SW]?n4 : n2));
 	show_digit vis_digit (.clk(MS[0]), .rstb(rstb), .numbers(N_DISP), .digit(digit), .seg_data(seg_data),.en(dip[TIMESET_SEL]? EN:EN2));
     
+    
+    parameter VGA_EN=12;
+    vga vga1(.clk(clk),.rstb(rstb),.pattern_en(dip[VGA_EN]),.date(DATE_REF),.t(T_REF),
+    .vga_vs(vga_vs),.vga_hs(vga_hs),.vga_r(vga_r),.vga_g(vga_g),.vga_b(vga_b));
 endmodule

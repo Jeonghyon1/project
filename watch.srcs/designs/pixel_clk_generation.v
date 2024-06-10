@@ -46,8 +46,8 @@ module pixel_clk_generation(
     assign sec10 = (sec / 10) | (current[5:0] / 10) | (sw_time[5:0] / 10) | (t[5:0] / 10);
     assign sec1 = (sec % 10) | (current[5:0] % 10) | (sw_time[5:0] % 10) | (t[5:0] % 10);
     
-    assign yr1000 = (date[17:12] / 1000) % 10;
-    assign yr100 = (date[17:12] / 100) % 10;
+    assign yr1000 = 4'b0010;//(date[17:12] / 1000) % 10;
+    assign yr100 = 4'b0000;//(date[17:12] / 100) % 10;
     assign yr10 = (date[17:12] / 10) % 10;
     assign yr1 = date[17:12] % 10;
     

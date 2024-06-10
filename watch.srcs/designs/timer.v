@@ -8,7 +8,8 @@ module timer(
 reg [17:0] buff;
 always@(posedge clk) begin
 	if(!rstb) begin
-		rem_t=18'o77_77_77;
+		rem_t<=18'o77_77_77;
+		buff<=18'o77_77_77;
 	end
 	else begin
 		if(!pause)

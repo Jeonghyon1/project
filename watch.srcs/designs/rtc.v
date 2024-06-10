@@ -1,18 +1,18 @@
-module rtc(input clk, rstb, [5:0] scale, output reg [9:0] ms, reg [31:0] ms_acc); //accumulated up to 2^32
+module rtc(input clk, rstb, [3:0] scale, output reg [9:0] ms, reg [31:0] ms_acc); //accumulated up to 2^32
 /*
 ms: time in milisecond, goes back to 0 with each 1s
 ms_acc: total elapsed time after reset in milisecond
 */
 	integer cnt = 0;
 	parameter freq = 100;//in MHz
-
+	
 	always@(posedge clk) begin
 		if(!rstb) begin //active L, sync
 			cnt <= 0;
 			ms <= 0;
 			ms_acc <= 0;
 		end
-		else if(scale>6'o0_7 ? (cnt * scale[5:3] == freq * 1000) : (cnt * scale[2:0] == freq * 10000)) begin //times of period equals 1 milisecond
+		else if(scale>4'b00_11 ? (cnt * 2**(scale[3:2]-1) == freq * 1000) : (cnt * 2**scale[1:0] == freq * 16000)) begin //times of period equals 1 milisecond
 			cnt <= 0;
 			ms_acc <= ms_acc + 1;
 
