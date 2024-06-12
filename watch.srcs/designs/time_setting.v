@@ -4,6 +4,8 @@ module time_setting (
     input left, right,
     input inc, dec,
     input set,mode,
+    input [17:0] prst_d,
+    input [17:0] prst_t,
     output reg [17:0] t, date,
     output reg [17:0] tmp,
     output reg [2:0] digit
@@ -38,14 +40,21 @@ always@(posedge clk or negedge rstb) begin
 if(!rstb) begin
 digit <= 0;
 tmp <= 0;
-t <= 0;
-date<=0;
-sec <= 0;
-min <= 0;
-hr <= 0;
-day <= 1;
-mon <= 1;
-yr <= 24;
+if(prst_d)begin
+{yr,mon,day}<=prst_d;
+date<=prst_d;
+end else begin
+{yr,mon,day}<={6'd24,6'd1,6'd1};
+date<={6'd24,6'd1,6'd1};
+end
+if(prst_t)begin
+{hr,min,sec}<=prst_t;
+t<=prst_t;
+end else begin
+{hr,min,sec}<=0;
+t<=0;
+end
+
 //VAL_CHANGED <= 1;
 set_done=0;
 end

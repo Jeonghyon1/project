@@ -4,7 +4,7 @@ module scale(
     input faster,
     input slower,
     input en,
-    output reg [3:0] scale
+    output reg [2:0] scale
     );
 /*
 	en: enable to change scale
@@ -14,20 +14,22 @@ module scale(
 	one_shot o201s(.clk(clk),.in(slower&&en),.out(s_trig));
     always@(posedge clk) begin
     	if(!rstb)
-        	scale<=4'b01_00;
+        	scale<=3;
     	else begin
     		if(f_trig) begin
-				if(scale > 4'b00_11)
-					scale <= scale + 4'b01_00;
+				if(scale == 7)
+					scale <= scale;
 				else
-					scale <= scale + 4'b00_01;
+					scale <= scale + 1;
 			end
 			else if(s_trig) begin
-				if(scale < 4'b10_00)
-					scale <= scale - 4'b00_01;
+				if(scale == 0)
+					scale <= scale;
 				else
-					scale <= scale - 4'b01_00;
+					scale <= scale - 1;
 			end
+			else
+				scale<=scale;
     	end
     end			
 endmodule

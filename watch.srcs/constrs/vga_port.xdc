@@ -16,12 +16,6 @@ set_property IOSTANDARD LVCMOS33 [get_ports clk]
 set_property IOSTANDARD LVCMOS33 [get_ports vga_vs]
 set_property IOSTANDARD LVCMOS33 [get_ports vga_hs]
 
-set_property IOSTANDARD LVCMOS15 [get_ports pattern_sel[2]]
-set_property IOSTANDARD LVCMOS15 [get_ports pattern_sel[1]]
-set_property IOSTANDARD LVCMOS15 [get_ports pattern_sel[0]]
-set_property PACKAGE_PIN V20 [get_ports pattern_sel[2]]
-set_property PACKAGE_PIN T21 [get_ports pattern_sel[1]]
-set_property PACKAGE_PIN U21 [get_ports pattern_sel[0]]
 set_property PACKAGE_PIN U20 [get_ports pattern_en]
 set_property IOSTANDARD LVCMOS15 [get_ports pattern_en]
 
