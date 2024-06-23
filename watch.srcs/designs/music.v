@@ -17,9 +17,13 @@ module music(
     A3 = 2271,  A4 = 1135,  A5 = 567,
     A3S = 2144, A4S = 1072, A5S = 536,
     B3 = 2024,  B4 = 1011,  B5 = 505;*/
+    
+    // pitches used in melody
     N0 = 0, N1 = 1910, N2 = 1516, N3 = 1431, N4 = 1275, N5 = 1203, N6 = 1135, 
     N7 = 1011, N8 = 954, N9 = 850, N10 = 803, N11 = 758, N12 = 715;
     
+    // phrase consisting the melody
+    // each 4 bits indicates the pitches; N0, N1, ..., N12
     parameter
     P0 = 16'b0000000000000000,
     P1 = 16'b1011101010111010,
@@ -38,23 +42,31 @@ module music(
     P14= 16'b0111011101110010,
     P15= 16'b0110011001100010; 
     
-    
+    // current pitch
     reg [11:0] PITCH;
-    reg [11:0] pitch_temp;
-
+	
+	// actual sound module instantiation
+	// this role as instrument
     sound S (.clk(clk), .rstb(rstb), .is_ringing(is_ringing), .pitch(PITCH), .buzz(buzz));
     
-    // 120bpm = 2bps
+	// This two rel_cnt is used to adjust clock to real tempo
     reg [15:0] rel_cnt1, rel_cnt2;
+    // note_cnt denotes which order of note is played in phfase, 
+    // from 0 to 3
     reg [1:0] note_cnt;
+    // note is the actual note number being played
     reg [3:0] note;
+    // the current phrase being played
     reg [15:0] phrase;
+    // there are total 25 states(one is just initial stsate)
     reg [4:0] curr_state;
+    // triggers for note and phrase change
     reg is_note_changed;
     reg is_phrase_changed;
     
     always@(posedge clk or negedge rstb)
-    begin       
+    begin   
+    	// reset    
         if (!rstb)
         begin
             rel_cnt1 <= 0;
@@ -67,9 +79,11 @@ module music(
             is_phrase_changed <= 0;
             curr_state <= 1;
         end
+        // if phrase changed is required
         else if (is_phrase_changed)
         begin
             is_phrase_changed <= 0;
+            // switch to next phrase
             case (curr_state)
                 5'd1: begin phrase <= P2; end
                 5'd2: begin phrase <= P3; end
@@ -98,9 +112,11 @@ module music(
                 default: begin phrase <= P1; end
             endcase
         end
+        // if there is a note change
         else if (is_note_changed)
         begin
             is_note_changed <= 0;
+            // assign a pitch by the note
             case (note)
                 4'd1: begin PITCH <= N1; end
                 4'd2: begin PITCH <= N2; end
@@ -119,10 +135,13 @@ module music(
         end
         else
         begin
+        	// each note is 8th note and the tempo is 120 bpm.
+        	// therefore two cnt variables are used to count 250ms
             if (rel_cnt1 == 16'd9999) begin
                 rel_cnt1 <= 0;
                 if (rel_cnt2 == 16'd2499) begin
                     rel_cnt2 <= 0;
+                    // assign note in current phrase according to note_cnt
                     case (note_cnt)
                         2'b00: begin
                             note <= phrase[15:12];
@@ -140,20 +159,26 @@ module music(
                             note <= 0;
                         end
                     endcase                    
-                    
+                    // if note_cnt is 3, then it returns to 0
+                    // and phrase change should be triggered
                     if (note_cnt == 2'b11) begin
                         note_cnt <= 0;
                         is_phrase_changed <= 1;
+                        // if current state is the last state(24)
+                        // then return to first state
                         if (curr_state == 5'd24) begin
                             curr_state <= 5'd1;
                         end
+                        // otherwise, move to next state
                         else begin
                             curr_state <= curr_state + 1;
                         end
                     end
+                    // move to next note
                     else begin
                         note_cnt <= note_cnt + 1;
                     end
+                    // after move to next note, trigger that the note has just been changed
                     is_note_changed <= 1;
                 end
                 else begin
